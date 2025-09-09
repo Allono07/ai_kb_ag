@@ -17,6 +17,8 @@
             background: #0a0a0a;
             color: #ffffff;
             overflow-x: hidden;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Navigation */
@@ -271,6 +273,13 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            touch-action: none;
+            pointer-events: auto;
+        }
+
+        .canvas-container canvas {
+            touch-action: none;
+            pointer-events: auto;
         }
 
         /* Responsive */
@@ -359,6 +368,21 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @keyframes touchFeedback {
+            0% { 
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -497,6 +521,48 @@
                     this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
                     this.mouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
                 });
+
+                // Touch events for mobile interactivity
+                let touchStartY = 0;
+                let touchStartX = 0;
+                let isTouchInteracting = false;
+                let lastTouchTime = 0;
+
+                window.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    touchStartY = touch.clientY;
+                    touchStartX = touch.clientX;
+                    lastTouchTime = Date.now();
+                    
+                    // Only prevent default if touching on canvas areas
+                    const target = e.target;
+                    if (target.tagName === 'CANVAS' || target.closest('.canvas-container')) {
+                        e.preventDefault();
+                        isTouchInteracting = true;
+                        // Add visual feedback for touch interaction
+                        this.addTouchFeedback(touch.clientX, touch.clientY);
+                    }
+                    
+                    this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                    this.mouse.y = -((touch.clientY / window.innerHeight) * 2 - 1);
+                });
+
+                window.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    
+                    // If it's a small movement, treat as 3D interaction
+                    if (isTouchInteracting && (deltaX < 15 || deltaY < 15)) {
+                        e.preventDefault();
+                        this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+                        this.mouse.y = -((touch.clientY / window.innerHeight) * 2 - 1);
+                    }
+                });
+
+                window.addEventListener('touchend', (e) => {
+                    isTouchInteracting = false;
+                });
             }
 
             async initializeScenes() {
@@ -552,6 +618,46 @@
                 } else {
                     navbar.style.background = 'rgba(0, 0, 0, 0.9)';
                 }
+
+                // Update 3D scenes based on scroll position for mobile
+                this.updateScenesOnScroll(scrollY);
+            }
+
+            updateScenesOnScroll(scrollY) {
+                // Add subtle scroll-based animation to 3D elements
+                Object.values(this.sceneManagers).forEach(manager => {
+                    if (manager.scene) {
+                        // Rotate scenes slightly based on scroll
+                        const rotationSpeed = 0.0001;
+                        manager.scene.rotation.y = scrollY * rotationSpeed;
+                        manager.scene.rotation.x = Math.sin(scrollY * 0.001) * 0.1;
+                    }
+                });
+            }
+
+            addTouchFeedback(x, y) {
+                // Create a temporary visual feedback element for touch interactions
+                const feedback = document.createElement('div');
+                feedback.style.position = 'fixed';
+                feedback.style.left = x + 'px';
+                feedback.style.top = y + 'px';
+                feedback.style.width = '20px';
+                feedback.style.height = '20px';
+                feedback.style.borderRadius = '50%';
+                feedback.style.background = 'radial-gradient(circle, rgba(0,245,255,0.8) 0%, transparent 70%)';
+                feedback.style.pointerEvents = 'none';
+                feedback.style.zIndex = '9999';
+                feedback.style.transform = 'translate(-50%, -50%)';
+                feedback.style.animation = 'touchFeedback 0.6s ease-out forwards';
+                
+                document.body.appendChild(feedback);
+                
+                // Remove feedback element after animation
+                setTimeout(() => {
+                    if (feedback.parentNode) {
+                        feedback.parentNode.removeChild(feedback);
+                    }
+                }, 600);
             }
 
             toggleMobileMenu() {
@@ -612,7 +718,9 @@
                 this.renderer = null;
                 this.nodes = [];
                 this.connections = [];
-                this.nodeCount = 50;
+                // Reduce node count on mobile for better performance
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                this.nodeCount = isMobile ? 25 : 50;
                 this.mouse = { x: 0, y: 0 };
                 this.time = 0;
                 
@@ -638,12 +746,16 @@
             }
 
             setupRenderer() {
+                // Detect mobile device for performance optimization
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
                 this.renderer = new THREE.WebGLRenderer({ 
-                    antialias: true, 
-                    alpha: true 
+                    antialias: !isMobile, // Disable antialiasing on mobile for better performance
+                    alpha: true,
+                    powerPreference: isMobile ? "low-power" : "high-performance"
                 });
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
                 this.renderer.setClearColor(0x000000, 0);
                 this.container.appendChild(this.renderer.domElement);
             }
