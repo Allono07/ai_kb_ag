@@ -26,10 +26,12 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.08);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+            backdrop-filter: blur(14px) saturate(120%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
             z-index: 1000;
-            padding: 1rem 0;
+            padding: 0.75rem 0;
             transition: all 0.3s ease;
         }
 
@@ -37,18 +39,17 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
+            gap: 2rem;
             padding: 0 2rem;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #00f5ff, #ff00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
         }
 
         .nav-menu {
@@ -65,7 +66,7 @@
         }
 
         .nav-link:hover {
-            color: #00f5ff;
+            color: #0c3e66;
         }
 
         .nav-link::after {
@@ -75,7 +76,7 @@
             height: 2px;
             bottom: -5px;
             left: 0;
-            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            background: linear-gradient(45deg, #0c3e66, #ffffff);
             transition: width 0.3s ease;
         }
 
@@ -118,13 +119,13 @@
 
         /* Home Section */
         #home {
-            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+            background: radial-gradient(ellipse at center, #0c3e66 0%, #000000 100%);
         }
 
         .hero-content h1 {
             font-size: clamp(2rem, 5vw, 4rem);
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #00f5ff, #ff00ff, #00ff00);
+            background: linear-gradient(45deg, #ffffff, #0c3e66);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -132,8 +133,8 @@
         }
 
         @keyframes glow {
-            from { filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.3)); }
-            to { filter: drop-shadow(0 0 30px rgba(255, 0, 255, 0.5)); }
+            from { filter: drop-shadow(0 0 20px rgba(12, 62, 102, 0.3)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.35)); }
         }
 
         .hero-content p {
@@ -148,7 +149,7 @@
         .cta-button {
             display: inline-block;
             padding: 1rem 2rem;
-            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            background: linear-gradient(45deg, #0c3e66, #ffffff);
             color: white;
             text-decoration: none;
             border-radius: 50px;
@@ -160,18 +161,18 @@
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 245, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(12, 62, 102, 0.4);
         }
 
         /* Services Section */
         #services {
-            background: #111111;
+            background: #0a0a0a;
         }
 
         .section-title {
             font-size: 2.5rem;
             margin-bottom: 3rem;
-            background: linear-gradient(45deg, #00f5ff, #ffffff);
+            background: linear-gradient(45deg, #ffffff, #0c3e66);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -179,53 +180,139 @@
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         .service-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 2rem;
+            border-radius: 16px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.1), transparent);
-            transition: left 0.5s ease;
+        .service-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
         }
 
-        .service-card:hover::before {
-            left: 100%;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-            border-color: #00f5ff;
-            box-shadow: 0 15px 35px rgba(0, 245, 255, 0.2);
+        .service-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .service-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(45deg, #00f5ff, #ff00ff);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(45deg, #0c3e66, #ffffff);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .service-title {
+            text-align: left;
+        }
+
+        .service-title h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .service-title p {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        .service-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: grid;
+            place-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .service-card:hover .service-toggle {
+            transform: rotate(90deg);
+        }
+
+        .service-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease, border-color 0.3s ease;
+            padding: 0 1.5rem;
+            border-top: 1px solid transparent;
+        }
+
+        .service-card.expanded .service-content {
+            padding: 1rem 1.5rem 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .service-list {
+            text-align: left;
+            display: grid;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 1.25rem;
+        }
+
+        .service-list li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #00f5ff;
+            opacity: 0.9;
+        }
+
+        .mini-interactive {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .accuracy-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .accuracy-fill {
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, #0c3e66, #ffffff);
+        }
+
+        .appdev-canvas {
+            width: 100%;
+            height: 240px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         /* Testimonials Section */
@@ -233,11 +320,22 @@
             background: #0a0a0a;
         }
 
-        .testimonials-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+            border-radius: 16px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+            will-change: transform;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            padding: 2rem;
         }
 
         .testimonial-card {
@@ -261,8 +359,48 @@
         }
 
         .testimonial-author {
-            color: #00f5ff;
+            color: #0c3e66;
             font-weight: bold;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        .carousel-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .carousel-dot.active {
+            background: #0c3e66;
         }
 
         /* 3D Canvas */
@@ -316,8 +454,7 @@
                 transform: rotate(45deg) translate(-5px, -6px);
             }
 
-            .services-grid,
-            .testimonials-container {
+            .services-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -395,7 +532,7 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="logo">AI Agency</div>
+            <div class="logo">ALGOKA.IO</div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#home" class="nav-link">Home</a></li>
                 <li><a href="#services" class="nav-link">Services</a></li>
@@ -427,35 +564,60 @@
         <div class="container">
             <h2 class="section-title">Our Services</h2>
             <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🤖</div>
-                    <h3>Machine Learning</h3>
-                    <p>Custom ML models tailored to your business needs. From predictive analytics to automated decision-making systems.</p>
+                <!-- AI Development -->
+                <div class="service-card" id="aiDevCard">
+                    <div class="service-header" data-toggle="service">
+                        <div class="service-header-left">
+                            <div class="service-icon">🧠</div>
+                            <div class="service-title">
+                                <h3>AI Development</h3>
+                                <p>We specialize in developing company-specific AI models</p>
+                            </div>
+                        </div>
+                        <div class="service-toggle">➕</div>
+                    </div>
+                    <div class="service-content">
+                        <ul class="service-list">
+                            <li>Higher Accuracy – Understands company-specific jargon, data, and workflows.</li>
+                            <li>Personalization – Reflects the company’s tone, policies, and brand voice.</li>
+                            <li>Data Security – Keeps sensitive information in-house and compliant.</li>
+                            <li>Efficiency – Automates tasks with context-aware reliability.</li>
+                            <li>Competitive Edge – Embeds proprietary knowledge unavailable to competitors.</li>
+                            <li>Cost Optimization – Uses smaller, fine-tuned models for lower resource use.</li>
+                            <li>Continuous Learning – Improves over time with ongoing company data.</li>
+                        </ul>
+                        <div class="mini-interactive">
+                            <div style="display:flex;justify-content:space-between;align-items:center;gap:0.75rem;">
+                                <span style="opacity:0.85;">Model Accuracy</span>
+                                <span id="accuracyValue" style="color:#00f5ff;font-weight:bold;">40%</span>
+                            </div>
+                            <input id="accuracySlider" type="range" min="40" max="98" value="40" style="width:100%;" />
+                            <div class="accuracy-bar"><div id="accuracyFill" class="accuracy-fill"></div></div>
+                            <small style="opacity:0.8;">Drag to see how fine-tuning improves accuracy</small>
+                        </div>
+                    </div>
                 </div>
-                <div class="service-card">
-                    <div class="service-icon">🧠</div>
-                    <h3>Neural Networks</h3>
-                    <p>Deep learning solutions for complex pattern recognition, image processing, and natural language understanding.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">💬</div>
-                    <h3>AI Chatbots</h3>
-                    <p>Intelligent conversational AI that enhances customer experience and automates support processes.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">📊</div>
-                    <h3>Data Analytics</h3>
-                    <p>Transform raw data into actionable insights with advanced AI-powered analytics and visualization tools.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🎯</div>
-                    <h3>AI Automation</h3>
-                    <p>Streamline operations with intelligent automation solutions that reduce costs and increase efficiency.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🔮</div>
-                    <h3>Predictive AI</h3>
-                    <p>Forecast trends and outcomes with advanced predictive models powered by machine learning algorithms.</p>
+
+                <!-- App Development -->
+                <div class="service-card" id="appDevCard">
+                    <div class="service-header" data-toggle="service">
+                        <div class="service-header-left">
+                            <div class="service-icon">📱</div>
+                            <div class="service-title">
+                                <h3>App Development</h3>
+                                <p>AI-powered apps with beautiful UX and robust engineering</p>
+                            </div>
+                        </div>
+                        <div class="service-toggle">➕</div>
+                    </div>
+                    <div class="service-content">
+                        <div id="appDevMini3D" class="appdev-canvas"></div>
+                        <ul class="service-list" style="margin-top:1rem;">
+                            <li>Native and web apps that integrate your AI models seamlessly.</li>
+                            <li>Secure, scalable backends and modern, delightful UI.</li>
+                            <li>Performance-focused builds with analytics and monitoring.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -466,18 +628,30 @@
         <div class="canvas-container" id="testimonialsCanvas"></div>
         <div class="container">
             <h2 class="section-title">Client Testimonials</h2>
-            <div class="testimonials-container">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Their AI solution transformed our customer service. Response times improved by 80% and customer satisfaction reached new heights."</p>
-                    <div class="testimonial-author">- Sarah Johnson, CEO Tech Innovations</div>
+            <div class="carousel" id="testimonialCarousel">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"Their AI solution transformed our customer service. Response times improved by 80% and customer satisfaction reached new heights."</p>
+                            <div class="testimonial-author">- Sarah Johnson, CEO Tech Innovations</div>
+                        </div>
+                    </div>
+                    <div class="carousel-slide">
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"The predictive analytics model they built saved us millions in operational costs. Truly cutting-edge technology."</p>
+                            <div class="testimonial-author">- Michael Chen, CTO DataCorp</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"The predictive analytics model they built saved us millions in operational costs. Truly cutting-edge technology."</p>
-                    <div class="testimonial-author">- Michael Chen, CTO DataCorp</div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Working with this team was exceptional. They delivered a complex machine learning solution on time and exceeded expectations."</p>
-                    <div class="testimonial-author">- Emma Rodriguez, VP Operations</div>
+                <div class="carousel-controls">
+                    <div class="carousel-buttons">
+                        <button class="carousel-btn" id="prevTestimonial" aria-label="Previous">◀</button>
+                        <button class="carousel-btn" id="nextTestimonial" aria-label="Next">▶</button>
+                    </div>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" data-index="0"></div>
+                        <div class="carousel-dot" data-index="1"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -492,6 +666,8 @@
                 this.sceneManagers = {};
                 this.isLoading = true;
                 this.mouse = { x: 0, y: 0 };
+                this.appDevMiniScene = null;
+                this.carousel = { index: 0, timer: null };
                 
                 this.init();
             }
@@ -499,6 +675,9 @@
             async init() {
                 this.setupEventListeners();
                 await this.initializeScenes();
+                this.setupServicesAccordion();
+                this.setupAIMiniInteractive();
+                this.setupTestimonialCarousel();
                 this.hideLoadingScreen();
                 this.startAnimationLoop();
             }
@@ -611,12 +790,14 @@
                     }
                 }
 
-                // Update navbar transparency
+                // Update navbar glass intensity
                 const navbar = document.getElementById('navbar');
                 if (scrollY > 50) {
-                    navbar.style.background = 'rgba(0, 0, 0, 0.95)';
+                    navbar.style.background = 'rgba(255, 255, 255, 0.12)';
+                    navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.18)';
                 } else {
-                    navbar.style.background = 'rgba(0, 0, 0, 0.9)';
+                    navbar.style.background = 'rgba(255, 255, 255, 0.08)';
+                    navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.12)';
                 }
 
                 // Update 3D scenes based on scroll position for mobile
@@ -694,6 +875,10 @@
                             manager.update();
                         }
                     });
+
+                    if (this.appDevMiniScene) {
+                        this.appDevMiniScene.update();
+                    }
                 };
                 animate();
             }
@@ -706,6 +891,89 @@
                         loadingScreen.style.display = 'none';
                     }, 500);
                 }, 1000);
+            }
+
+            setupServicesAccordion() {
+                const cards = document.querySelectorAll('.service-card');
+                cards.forEach(card => {
+                    const header = card.querySelector('[data-toggle="service"]');
+                    const content = card.querySelector('.service-content');
+                    header.addEventListener('click', () => {
+                        const isExpanded = card.classList.contains('expanded');
+                        // collapse all
+                        document.querySelectorAll('.service-card.expanded').forEach(open => {
+                            open.classList.remove('expanded');
+                            const c = open.querySelector('.service-content');
+                            c.style.maxHeight = '0px';
+                            const t = open.querySelector('.service-toggle');
+                            if (t) t.textContent = '➕';
+                            // dispose mini 3D if closing app dev
+                            if (open.id === 'appDevCard' && this.appDevMiniScene) {
+                                this.appDevMiniScene.dispose();
+                                this.appDevMiniScene = null;
+                            }
+                        });
+
+                        if (!isExpanded) {
+                            card.classList.add('expanded');
+                            // Recalculate height after padding added by expanded state
+                            requestAnimationFrame(() => {
+                                content.style.maxHeight = content.scrollHeight + 'px';
+                            });
+                            const toggleEl = card.querySelector('.service-toggle');
+                            if (toggleEl) toggleEl.textContent = '➖';
+                            if (card.id === 'appDevCard' && !this.appDevMiniScene) {
+                                const container = document.getElementById('appDevMini3D');
+                                this.appDevMiniScene = new AppDevMiniScene(container);
+                                this.appDevMiniScene.init();
+                            }
+                        }
+                    });
+                });
+
+                // Ensure open panel keeps correct height on resize
+                window.addEventListener('resize', () => {
+                    const open = document.querySelector('.service-card.expanded .service-content');
+                    if (open) open.style.maxHeight = open.scrollHeight + 'px';
+                });
+            }
+
+            setupAIMiniInteractive() {
+                const slider = document.getElementById('accuracySlider');
+                const value = document.getElementById('accuracyValue');
+                const fill = document.getElementById('accuracyFill');
+                if (!slider || !value || !fill) return;
+                const update = () => {
+                    value.textContent = slider.value + '%';
+                    fill.style.width = slider.value + '%';
+                };
+                slider.addEventListener('input', update);
+                update();
+            }
+
+            setupTestimonialCarousel() {
+                const track = document.getElementById('carouselTrack');
+                const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+                const prev = document.getElementById('prevTestimonial');
+                const next = document.getElementById('nextTestimonial');
+                const setIndex = (idx) => {
+                    const total = dots.length;
+                    this.carousel.index = (idx + total) % total;
+                    track.style.transform = `translateX(-${this.carousel.index * 100}%)`;
+                    dots.forEach((d, i) => d.classList.toggle('active', i === this.carousel.index));
+                };
+                const auto = () => {
+                    if (this.carousel.timer) clearInterval(this.carousel.timer);
+                    this.carousel.timer = setInterval(() => setIndex(this.carousel.index + 1), 5000);
+                };
+                prev.addEventListener('click', () => { setIndex(this.carousel.index - 1); auto(); });
+                next.addEventListener('click', () => { setIndex(this.carousel.index + 1); auto(); });
+                dots.forEach(d => d.addEventListener('click', () => { setIndex(parseInt(d.dataset.index)); auto(); }));
+                const carouselEl = document.getElementById('testimonialCarousel');
+                carouselEl.addEventListener('mouseenter', () => clearInterval(this.carousel.timer));
+                carouselEl.addEventListener('mouseleave', auto);
+                setIndex(0);
+                auto();
             }
         }
 
@@ -1145,6 +1413,94 @@
                     this.renderer.setSize(width, height);
                     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 }
+            }
+        }
+
+        // Mini 3D Scene for App Development accordion
+        class AppDevMiniScene {
+            constructor(container) {
+                this.container = container;
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.meshes = [];
+                this._boundResize = () => this.handleResize();
+            }
+
+            init() {
+                this.scene = new THREE.Scene();
+                const aspect = this.container.clientWidth / Math.max(1, this.container.clientHeight);
+                this.camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 100);
+                this.camera.position.z = 3.5;
+
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.setClearColor(0x000000, 0);
+                this.container.innerHTML = '';
+                this.container.appendChild(this.renderer.domElement);
+
+                const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+                this.scene.add(ambient);
+                const dir = new THREE.DirectionalLight(0x00f5ff, 0.8);
+                dir.position.set(1, 1, 1);
+                this.scene.add(dir);
+
+                const geometry = new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0x00f5ff,
+                    metalness: 0.6,
+                    roughness: 0.2,
+                    emissive: 0x001a1a,
+                    emissiveIntensity: 0.6
+                });
+                const mesh = new THREE.Mesh(geometry, material);
+                this.meshes.push(mesh);
+                this.scene.add(mesh);
+
+                const ringGeo = new THREE.RingGeometry(1.2, 1.25, 64);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0xff00ff, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                this.scene.add(ring);
+
+                this.handleResize();
+                window.addEventListener('resize', this._boundResize);
+            }
+
+            update() {
+                const t = performance.now() * 0.001;
+                this.meshes.forEach((m, i) => {
+                    m.rotation.x = t * 0.6;
+                    m.rotation.y = t * 0.4;
+                });
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            handleResize() {
+                const w = this.container.clientWidth;
+                const h = Math.max(1, this.container.clientHeight);
+                if (this.camera) {
+                    this.camera.aspect = w / h;
+                    this.camera.updateProjectionMatrix();
+                }
+                if (this.renderer) {
+                    this.renderer.setSize(w, h);
+                }
+            }
+
+            dispose() {
+                window.removeEventListener('resize', this._boundResize);
+                if (this.renderer) {
+                    this.renderer.dispose();
+                    if (this.renderer.domElement && this.renderer.domElement.parentNode) {
+                        this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+                    }
+                }
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.meshes = [];
             }
         }
 
