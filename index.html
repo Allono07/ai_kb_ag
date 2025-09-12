@@ -26,23 +26,26 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            -webkit-backdrop-filter: blur(14px) saturate(120%);
-            backdrop-filter: blur(14px) saturate(120%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            background: transparent;
             z-index: 1000;
             padding: 0.75rem 0;
             transition: all 0.3s ease;
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 960px;
             margin: 0 auto;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 2rem;
-            padding: 0 2rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+            backdrop-filter: blur(14px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            box-shadow: 0 8px 30px rgba(12, 62, 102, 0.25);
         }
 
         .logo {
@@ -120,6 +123,22 @@
         /* Home Section */
         #home {
             background: radial-gradient(ellipse at center, #0c3e66 0%, #000000 100%);
+        }
+
+        /* Left-align hero content and push 3D to the right */
+        #home .container {
+            text-align: left;
+            display: grid;
+            grid-template-columns: 1fr;
+            align-items: center;
+        }
+
+        #home .hero-content { max-width: 640px; }
+
+        #home .canvas-container {
+            left: 0;
+            right: auto;
+            width: 100%;
         }
 
         .hero-content h1 {
@@ -308,16 +327,19 @@
 
         .appdev-canvas {
             width: 100%;
-            height: 240px;
+            height: 520px;
             border-radius: 12px;
             overflow: hidden;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Testimonials Section */
         #testimonials {
-            background: #0a0a0a;
+            background: radial-gradient(ellipse at center, #000000 0%, #000000 100%);
         }
 
         .carousel {
@@ -461,6 +483,9 @@
             .nav-container {
                 padding: 0 1rem;
             }
+
+            #home .container { grid-template-columns: 1fr; }
+            #home .canvas-container { width: 100%; left: 0; right: 0; }
         }
 
         @media (max-width: 480px) {
@@ -668,6 +693,7 @@
                 this.mouse = { x: 0, y: 0 };
                 this.appDevMiniScene = null;
                 this.carousel = { index: 0, timer: null };
+                this.currentExpandedServiceId = null;
                 
                 this.init();
             }
@@ -790,14 +816,12 @@
                     }
                 }
 
-                // Update navbar glass intensity
-                const navbar = document.getElementById('navbar');
+                // Emphasize nav glass shadow on scroll
+                const navContainer = document.querySelector('.nav-container');
                 if (scrollY > 50) {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.12)';
-                    navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.18)';
+                    navContainer.style.boxShadow = '0 12px 40px rgba(12, 62, 102, 0.35)';
                 } else {
-                    navbar.style.background = 'rgba(255, 255, 255, 0.08)';
-                    navbar.style.borderBottom = '1px solid rgba(255, 255, 255, 0.12)';
+                    navContainer.style.boxShadow = '0 8px 30px rgba(12, 62, 102, 0.25)';
                 }
 
                 // Update 3D scenes based on scroll position for mobile
@@ -894,39 +918,58 @@
             }
 
             setupServicesAccordion() {
-                const cards = document.querySelectorAll('.service-card');
-                cards.forEach(card => {
-                    const header = card.querySelector('[data-toggle="service"]');
-                    const content = card.querySelector('.service-content');
-                    header.addEventListener('click', () => {
-                        const isExpanded = card.classList.contains('expanded');
-                        // collapse all
-                        document.querySelectorAll('.service-card.expanded').forEach(open => {
-                            open.classList.remove('expanded');
-                            const c = open.querySelector('.service-content');
-                            c.style.maxHeight = '0px';
-                            const t = open.querySelector('.service-toggle');
-                            if (t) t.textContent = '➕';
-                            // dispose mini 3D if closing app dev
-                            if (open.id === 'appDevCard' && this.appDevMiniScene) {
-                                this.appDevMiniScene.dispose();
-                                this.appDevMiniScene = null;
-                            }
-                        });
+                const cards = Array.from(document.querySelectorAll('.service-card'));
+                cards.forEach(clickedCard => {
+                    const header = clickedCard.querySelector('[data-toggle="service"]');
+                    const clickedContent = clickedCard.querySelector('.service-content');
+                    header.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const wasExpanded = this.currentExpandedServiceId === clickedCard.id;
 
-                        if (!isExpanded) {
-                            card.classList.add('expanded');
-                            // Recalculate height after padding added by expanded state
+                        // Collapse previously open card only
+                        if (this.currentExpandedServiceId) {
+                            const prev = document.getElementById(this.currentExpandedServiceId);
+                            if (prev && prev !== clickedCard) {
+                                prev.classList.remove('expanded');
+                                const pc = prev.querySelector('.service-content');
+                                if (pc) pc.style.maxHeight = '0px';
+                                const pt = prev.querySelector('.service-toggle');
+                                if (pt) pt.textContent = '➕';
+                                if (prev.id === 'appDevCard' && this.appDevMiniScene) {
+                                    this.appDevMiniScene.dispose();
+                                    this.appDevMiniScene = null;
+                                }
+                            }
+                        }
+
+                        // Dispose mini scene if it exists (closing App Dev specifically)
+                        if (this.appDevMiniScene) {
+                            this.appDevMiniScene.dispose();
+                            this.appDevMiniScene = null;
+                        }
+
+                        // Toggle only the clicked card on if it was previously closed
+                        if (!wasExpanded) {
+                            clickedCard.classList.add('expanded');
                             requestAnimationFrame(() => {
-                                content.style.maxHeight = content.scrollHeight + 'px';
+                                clickedContent.style.maxHeight = clickedContent.scrollHeight + 'px';
                             });
-                            const toggleEl = card.querySelector('.service-toggle');
+                            const toggleEl = clickedCard.querySelector('.service-toggle');
                             if (toggleEl) toggleEl.textContent = '➖';
-                            if (card.id === 'appDevCard' && !this.appDevMiniScene) {
+
+                            if (clickedCard.id === 'appDevCard' && !this.appDevMiniScene) {
                                 const container = document.getElementById('appDevMini3D');
                                 this.appDevMiniScene = new AppDevMiniScene(container);
                                 this.appDevMiniScene.init();
                             }
+                            this.currentExpandedServiceId = clickedCard.id;
+                        } else {
+                            clickedCard.classList.remove('expanded');
+                            clickedContent.style.maxHeight = '0px';
+                            const toggleEl = clickedCard.querySelector('.service-toggle');
+                            if (toggleEl) toggleEl.textContent = '➕';
+                            this.currentExpandedServiceId = null;
                         }
                     });
                 });
@@ -1252,11 +1295,11 @@
                 const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
                 this.scene.add(ambientLight);
 
-                const directionalLight = new THREE.DirectionalLight(0x00f5ff, 1);
+                const directionalLight = new THREE.DirectionalLight(0x0c3e66, 1);
                 directionalLight.position.set(1, 1, 1);
                 this.scene.add(directionalLight);
 
-                const pointLight = new THREE.PointLight(0xff00ff, 0.8, 100);
+                const pointLight = new THREE.PointLight(0x0c3e66, 0.8, 100);
                 pointLight.position.set(-10, 10, -10);
                 this.scene.add(pointLight);
             }
@@ -1279,7 +1322,7 @@
                 // Animated geometric shapes
                 const geometry = new THREE.IcosahedronGeometry(1, 1);
                 const material = new THREE.MeshPhongMaterial({ 
-                    color: 0x00f5ff, 
+                    color: 0x0c3e66, 
                     wireframe: true,
                     transparent: true,
                     opacity: 0.6
@@ -1312,7 +1355,7 @@
                 
                 for (let i = 0; i < 12; i++) {
                     const material = new THREE.MeshPhongMaterial({
-                        color: new THREE.Color().setHSL(i / 12, 0.8, 0.6),
+                        color: new THREE.Color(0x0c3e66),
                         transparent: true,
                         opacity: 0.7
                     });
@@ -1334,10 +1377,10 @@
                 
                 for (let i = 0; i < 8; i++) {
                     const material = new THREE.MeshPhongMaterial({
-                        color: 0xff00ff,
+                        color: 0x0c3e66,
                         transparent: true,
                         opacity: 0.6,
-                        emissive: 0x330033
+                        emissive: 0x0c3e66
                     });
                     
                     const mesh = new THREE.Mesh(geometry, material);
@@ -1365,7 +1408,7 @@
                 
                 const particlesMaterial = new THREE.PointsMaterial({
                     size: 0.1,
-                    color: 0x00f5ff,
+                    color: 0x0c3e66,
                     transparent: true,
                     opacity: 0.8
                 });
@@ -1416,91 +1459,248 @@
             }
         }
 
-        // Mini 3D Scene for App Development accordion
+        // Mini interactive mobile game for App Development accordion (2D canvas)
         class AppDevMiniScene {
             constructor(container) {
                 this.container = container;
-                this.scene = null;
-                this.camera = null;
-                this.renderer = null;
-                this.meshes = [];
+                this.canvas = null;
+                this.ctx = null;
+                this.width = 0;
+                this.height = 0;
+                this.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
                 this._boundResize = () => this.handleResize();
+                this._boundInput = (e) => this.handleInput(e);
+                // Game state
+                this.player = { x: 0, y: 0, r: 12, vy: 0 };
+                this.gravity = 0.5;
+                this.jumpStrength = -8.5;
+                this.obstacles = [];
+                this.spawnTimer = 0;
+                this.spawnInterval = 1200; // ms
+                this.speed = 3.2;
+                this.lastTs = 0;
+                this.score = 0;
+                this.gameOver = false;
             }
 
             init() {
-                this.scene = new THREE.Scene();
-                const aspect = this.container.clientWidth / Math.max(1, this.container.clientHeight);
-                this.camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 100);
-                this.camera.position.z = 3.5;
-
-                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                this.renderer.setClearColor(0x000000, 0);
                 this.container.innerHTML = '';
-                this.container.appendChild(this.renderer.domElement);
-
-                const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-                this.scene.add(ambient);
-                const dir = new THREE.DirectionalLight(0x00f5ff, 0.8);
-                dir.position.set(1, 1, 1);
-                this.scene.add(dir);
-
-                const geometry = new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16);
-                const material = new THREE.MeshStandardMaterial({
-                    color: 0x00f5ff,
-                    metalness: 0.6,
-                    roughness: 0.2,
-                    emissive: 0x001a1a,
-                    emissiveIntensity: 0.6
-                });
-                const mesh = new THREE.Mesh(geometry, material);
-                this.meshes.push(mesh);
-                this.scene.add(mesh);
-
-                const ringGeo = new THREE.RingGeometry(1.2, 1.25, 64);
-                const ringMat = new THREE.MeshBasicMaterial({ color: 0xff00ff, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.rotation.x = Math.PI / 2;
-                this.scene.add(ring);
-
+                this.canvas = document.createElement('canvas');
+                // Portrait phone viewport inside the container
+                this.canvas.style.width = '320px';
+                this.canvas.style.height = '560px';
+                this.canvas.style.display = 'block';
+                this.canvas.style.borderRadius = '12px';
+                this.container.appendChild(this.canvas);
+                this.ctx = this.canvas.getContext('2d');
                 this.handleResize();
                 window.addEventListener('resize', this._boundResize);
+                this.canvas.addEventListener('pointerdown', this._boundInput);
+                window.addEventListener('keydown', this._boundInput);
+                this.reset();
+            }
+
+            reset() {
+                this.player.x = Math.round(this.width * 0.22);
+                this.player.y = Math.round(this.height * 0.5);
+                this.player.vy = 0;
+                this.obstacles = [];
+                this.spawnTimer = 0;
+                this.lastTs = performance.now();
+                this.score = 0;
+                this.gameOver = false;
+            }
+
+            handleInput(e) {
+                if (e.type === 'keydown' && e.code !== 'Space') return;
+                e.preventDefault();
+                if (this.gameOver) {
+                    this.reset();
+                    return;
+                }
+                this.player.vy = this.jumpStrength;
+            }
+
+            spawnObstacle() {
+                const gap = Math.max(120, Math.min(180, 120 + Math.random() * 80));
+                const minY = 40;
+                const maxY = this.height - 40 - gap;
+                const topHeight = Math.floor(minY + Math.random() * (maxY - minY));
+                const width = 36;
+                const x = this.width + width;
+                this.obstacles.push({ x, width, topHeight, gap });
             }
 
             update() {
-                const t = performance.now() * 0.001;
-                this.meshes.forEach((m, i) => {
-                    m.rotation.x = t * 0.6;
-                    m.rotation.y = t * 0.4;
-                });
-                this.renderer.render(this.scene, this.camera);
+                if (!this.ctx) return;
+                const now = performance.now();
+                const dt = Math.min(34, now - this.lastTs);
+                this.lastTs = now;
+                this.spawnTimer += dt;
+                if (this.spawnTimer > this.spawnInterval) {
+                    this.spawnObstacle();
+                    this.spawnTimer = 0;
+                }
+
+                if (!this.gameOver) {
+                    this.player.vy += this.gravity;
+                    this.player.y += this.player.vy;
+                }
+
+                for (let i = this.obstacles.length - 1; i >= 0; i--) {
+                    const o = this.obstacles[i];
+                    o.x -= this.speed;
+                    if (o.x + o.width < 0) {
+                        this.obstacles.splice(i, 1);
+                        this.score++;
+                    }
+                }
+
+                if (this.player.y - this.player.r < 0 || this.player.y + this.player.r > this.height) {
+                    this.gameOver = true;
+                }
+                for (const o of this.obstacles) {
+                    if (this.circleRectCollision(this.player.x, this.player.y, this.player.r, o.x, 0, o.width, o.topHeight) ||
+                        this.circleRectCollision(this.player.x, this.player.y, this.player.r, o.x, o.topHeight + o.gap, o.width, this.height - (o.topHeight + o.gap))) {
+                        this.gameOver = true;
+                    }
+                }
+
+                this.draw();
+            }
+
+            circleRectCollision(cx, cy, r, rx, ry, rw, rh) {
+                const testX = Math.max(rx, Math.min(cx, rx + rw));
+                const testY = Math.max(ry, Math.min(cy, ry + rh));
+                const dx = cx - testX;
+                const dy = cy - testY;
+                return dx * dx + dy * dy <= r * r;
+            }
+
+            drawPhoneFrame(ctx) {
+                const w = this.canvas.width;
+                const h = this.canvas.height;
+                const radius = 28 * this.devicePixelRatio;
+                ctx.save();
+                ctx.fillStyle = 'rgba(255,255,255,0.04)';
+                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.lineWidth = 2 * this.devicePixelRatio;
+                ctx.beginPath();
+                this.roundRect(ctx, 4 * this.devicePixelRatio, 4 * this.devicePixelRatio, w - 8 * this.devicePixelRatio, h - 8 * this.devicePixelRatio, radius);
+                ctx.fill();
+                ctx.stroke();
+                // Notch
+                ctx.fillStyle = 'rgba(0,0,0,0.35)';
+                const notchW = 80 * this.devicePixelRatio, notchH = 18 * this.devicePixelRatio;
+                ctx.fillRect(w * 0.5 - notchW * 0.5, 6 * this.devicePixelRatio, notchW, notchH);
+                ctx.restore();
+            }
+
+            draw() {
+                const ctx = this.ctx;
+                const w = this.canvas.width;
+                const h = this.canvas.height;
+                ctx.clearRect(0, 0, w, h);
+
+                // Background gradient
+                const g = ctx.createLinearGradient(0, 0, 0, h);
+                g.addColorStop(0, '#051b2c');
+                g.addColorStop(1, '#000000');
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, w, h);
+
+                // Phone frame
+                this.drawPhoneFrame(ctx);
+
+                // Game viewport
+                const inset = 18 * this.devicePixelRatio;
+                ctx.save();
+                const viewportY = inset + 22 * this.devicePixelRatio; // leave space for notch area
+                const viewportH = h - viewportY - inset - 8 * this.devicePixelRatio;
+                this.roundRect(ctx, inset, viewportY, w - inset * 2, viewportH, 20 * this.devicePixelRatio, true, false);
+                ctx.clip();
+
+                // Obstacles
+                ctx.fillStyle = '#0c3e66';
+                for (const o of this.obstacles) {
+                    const x = Math.round(o.x * this.devicePixelRatio);
+                    const width = Math.round(o.width * this.devicePixelRatio);
+                    const topH = Math.round(o.topHeight * this.devicePixelRatio);
+                    const gap = Math.round(o.gap * this.devicePixelRatio);
+                    // top pillar inside viewport
+                    ctx.fillRect(x, viewportY, width, topH);
+                    // bottom pillar inside viewport
+                    const bottomY = viewportY + topH + gap;
+                    const bottomH = viewportH - topH - gap;
+                    if (bottomH > 0) ctx.fillRect(x, bottomY, width, bottomH);
+                }
+
+                // Player
+                ctx.beginPath();
+                ctx.fillStyle = '#ffffff';
+                ctx.arc(Math.round(this.player.x * this.devicePixelRatio), Math.round(this.player.y * this.devicePixelRatio), Math.round(this.player.r * this.devicePixelRatio), 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+
+                // HUD
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.font = `${14 * this.devicePixelRatio}px Arial`;
+                ctx.textAlign = 'left';
+                ctx.fillText(`Score: ${this.score}`, 16 * this.devicePixelRatio, 24 * this.devicePixelRatio);
+
+                if (this.gameOver) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    const bw = w * 0.7;
+                    const bh = 80 * this.devicePixelRatio;
+                    const bx = (w - bw) / 2;
+                    const by = (h - bh) / 2;
+                    this.roundRect(ctx, bx, by, bw, bh, 16 * this.devicePixelRatio);
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.font = `${16 * this.devicePixelRatio}px Arial`;
+                    ctx.fillText('Game Over - Tap to Restart', w / 2, by + bh / 2);
+                }
+            }
+
+            roundRect(ctx, x, y, w, h, r, noFill, noStroke) {
+                if (w < 2 * r) r = w / 2;
+                if (h < 2 * r) r = h / 2;
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.arcTo(x + w, y, x + w, y + h, r);
+                ctx.arcTo(x + w, y + h, x, y + h, r);
+                ctx.arcTo(x, y + h, x, y, r);
+                ctx.arcTo(x, y, x + w, y, r);
+                if (!noFill) ctx.fill();
+                if (!noStroke) ctx.stroke();
             }
 
             handleResize() {
-                const w = this.container.clientWidth;
-                const h = Math.max(1, this.container.clientHeight);
-                if (this.camera) {
-                    this.camera.aspect = w / h;
-                    this.camera.updateProjectionMatrix();
-                }
-                if (this.renderer) {
-                    this.renderer.setSize(w, h);
+                // Maintain portrait aspect based on canvas CSS size
+                const rect = this.canvas.getBoundingClientRect();
+                const cssW = Math.round(rect.width);
+                const cssH = Math.round(rect.height);
+                this.width = cssW;
+                this.height = cssH;
+                if (this.canvas) {
+                    this.canvas.width = Math.floor(cssW * this.devicePixelRatio);
+                    this.canvas.height = Math.floor(cssH * this.devicePixelRatio);
                 }
             }
 
             dispose() {
                 window.removeEventListener('resize', this._boundResize);
-                if (this.renderer) {
-                    this.renderer.dispose();
-                    if (this.renderer.domElement && this.renderer.domElement.parentNode) {
-                        this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
-                    }
+                if (this.canvas) {
+                    this.canvas.removeEventListener('pointerdown', this._boundInput);
                 }
-                this.scene = null;
-                this.camera = null;
-                this.renderer = null;
-                this.meshes = [];
+                window.removeEventListener('keydown', this._boundInput);
+                if (this.canvas && this.canvas.parentNode) {
+                    this.canvas.parentNode.removeChild(this.canvas);
+                }
+                this.canvas = null;
+                this.ctx = null;
             }
         }
 
